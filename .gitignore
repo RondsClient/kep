@@ -1,0 +1,46 @@
+# dependencies
+node_modules/
+**/node_modules/
+
+# build outputs
+dist/
+dist-pro/
+dist-dev/
+dist-test/
+packages/server/dist/
+packages/web/dist/
+packages/web/dist-pro/
+packages/web/dist-dev/
+packages/web/dist-test/
+
+# local runtime / debug data (never commit)
+packages/server/data/*
+!packages/server/data/.gitkeep
+*.sqlite
+*.db
+**/backup/
+
+# secrets & install artifacts
+.env
+.env.local
+.env.*.local
+**/credentials.txt
+credentials.txt
+**/install-init.json
+install-init.json
+
+# release binaries
+release/
+installer/kpe-install
+installer/kpe-install.exe
+
+# logs & OS
+*.log
+.DS_Store
+Thumbs.db
+
+# IDE / local
+.idea/
+.vscode/
+*.swp
+*.swo

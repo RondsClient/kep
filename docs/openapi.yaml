@@ -1,0 +1,107 @@
+openapi: 3.0.3
+info:
+  title: KPE Open API
+  version: 1.1.0
+  description: KVM 宿主机 Agent API — 含 NAT 小鸡、云镜像库、API Key、Webhook
+servers:
+  - url: http://localhost:8000/api
+    description: 开发环境
+security:
+  - bearerAuth: []
+  - apiKeyAuth: []
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+    apiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-Api-Key
+  schemas:
+    ApiResponse:
+      type: object
+      properties:
+        code: { type: integer, example: 0 }
+        data: {}
+        message: { type: string }
+paths:
+  /auth/login:
+    post:
+      security: []
+      summary: 登录
+  /api-keys:
+    get:
+      summary: 列出 API Key
+    post:
+      summary: 创建 API Key
+  /webhooks:
+    get:
+      summary: Webhook 列表
+    post:
+      summary: 注册 Webhook
+  /cloud-images:
+    get:
+      summary: 云镜像库
+  /cloud-images/{id}/download:
+    post:
+      summary: 异步拉取云镜像
+  /vms/nat-chick:
+    post:
+      summary: 创建 NAT 小鸡
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name, cloudImageId, memoryMiB, vcpus, diskSizeGiB]
+              properties:
+                name: { type: string }
+                cloudImageId: { type: integer }
+                memoryMiB: { type: integer }
+                vcpus: { type: integer }
+                diskSizeGiB: { type: integer }
+                network: { type: string, default: default }
+                natPortQuota:
+                  type: integer
+                  default: 1
+                  description: NAT 端口配额，默认 1（SSH 占 1 个），其余为预留槽
+                password: { type: string }
+                sshPublicKey: { type: string }
+                portForwards:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      protocol: { type: string, enum: [tcp, udp] }
+                      guestPort: { type: integer }
+  /vms/{name}/port-forwards/{id}:
+    patch:
+      summary: 绑定预留 NAT 端口到 Guest 端口
+    get:
+      summary: NAT 端口映射列表
+    post:
+      summary: 添加 DNAT 规则
+  /vms/batch/power:
+    post:
+      summary: 批量电源操作
+  /vms/{name}/resize:
+    patch:
+      summary: 在线改配 CPU/内存
+  /vms/{name}/disks:
+    post:
+      summary: 挂载数据盘
+  /vms/{name}/clone:
+    post:
+      summary: 克隆 VM
+  /vms/{name}/backup:
+    post:
+      summary: 异步备份
+  /tenants:
+    get:
+      summary: 租户列表
+    post:
+      summary: 创建租户
+  /agents:
+    get:
+      summary: 多宿主机 Agent 注册表
